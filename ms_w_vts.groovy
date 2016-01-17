@@ -135,7 +135,17 @@ def vswitch(evt) {
     def vkid = getChildDevice(ddni(vswitch))
 //    log.debug "$evt.value $evt.deviceId $evt.description $evt.descriptionText"
 //    log.debug "vkid: $vkid"
-	vkid."${evt.value}"()
+    if (vkid) {
+        log.debug "Setting state of ${vkid} / ${vswitch} to ${evt.value}"
+        vkid.sendEvent([name: "switch", value: evt.value])
+    } else {
+        // Turning the entire strip on/off using ST causes this condition
+        def kids = getChildDevices()
+        kids.each {
+            log.debug "Setting state of ${it} / ${vswitch} to ${evt.value}"
+            it.sendEvent([name: "switch", value: evt.value])
+        }
+    }
 }
     
 //def mswitch(evt) { log.debug "$evt.value $evt.deviceId $evt.description $evt.descriptionText" }
