@@ -13,31 +13,21 @@ metadata {
 		capability "relaySwitch"
 		capability "Polling"
 		capability "Refresh"
-
-		attribute "lastOn",  "string"
-		attribute "lastOff", "string"
 	}
 }
 
 preferences {
 	tiles {
 		standardTile("switch", "device.switch", width: 2, height: 2, canChangeIcon: true) {
-			state "name", label: '${currentValue}', action: "switch.on", icon: "http://cdn.flaticon.com/png/256/56724.png", backgroundColor: "#DDDDff", nextState: "turningOn"
-			state "off", label: 'off', action: "switch.on", icon: "http://cdn.flaticon.com/png/256/56724.png", backgroundColor: "#DDDDff", nextState: "turningOn"
-			state "on", label: 'on', action: "switch.off", icon: "http://cdn.flaticon.com/png/256/56724.png", backgroundColor: "#0088ff", nextState: "turningOff"
-			state "turningOff", iconLabel:"http://cdn.flaticon.com/png/256/56413.png" , icon: "http://cdn.flaticon.com/png/256/56724.png", backgroundColor: "#FA5882", nextState: "on"
-			state "turningOn", iconLabel:"http://cdn.flaticon.com/png/256/56498.png" , icon: "http://cdn.flaticon.com/png/256/56724.png", backgroundColor: "#F3F781", nextState: "off"
+			state "name", label: '${currentValue}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#DDDDff", nextState: "turningOn"
+			state "off", label: 'off', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#DDDDff", nextState: "turningOn"
+			state "on", label: 'on', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821", nextState: "turningOff"
+			state "turningOff", label: 'turning off', icon: "st.switches.switch.on", backgroundColor: "#c0c0c0", nextState: "on"
+			state "turningOn", label: 'turning on', icon: "st.switches.switch.off", backgroundColor: "#c0c0c0", nextState: "off"
 		}
 
-	    valueTile("lastOn", "device.lastOn", inactiveLabel: false, width: 3, height: 1, canChangeIcon: false, decoration:"flat") {
-    	state "default", label: 'Last On: ${currentValue}'}  
-
-    	valueTile("lastOff", "device.lastOff", inactiveLabel: false, width: 3, height: 1, canChangeIcon: false, decoration:"flat") {
-    	state "default", label: 'Last Off: ${currentValue}'}  
-	
-
 		main "switch"
-		details(["switch", "lastOn", "lastOff"])
+		details(["switch"])
 	}
 }
 
@@ -49,16 +39,13 @@ def parse(desc) {
 def on() {
 	sendEvent([name: "switch", value: "on"])
     parent.on(this)
-	sendEvent([name: "lastOn", value: "${df(now())}"])
-  	log.debug "$device.label is On" 
+  	log.debug "$device.label is On"
 }
 
 def off() {
 	sendEvent([name: "switch", value: "off"])
     parent.off(this)
-	sendEvent([name: "switch", value: "$device.label"])
-	sendEvent([name: "lastOff", value: "${df(now())}"])
-  	log.debug "$device.label is Off" 
+  	log.debug "$device.label is Off"
 }
 
 def poll() {
